@@ -1,13 +1,16 @@
+import { Provider } from "react-redux";
 import Body from "./components/Body";
 import Head from "./components/Head";
+import store from "./utils/store";
 
 function App() {
   return (
-    <div>
-      <Head />
-      <Body />
+    <Provider store={store}>
+      <div>
+        <Head />
+        <Body />
 
-      {/* 
+        {/* 
       
       Head
       Body
@@ -19,7 +22,8 @@ function App() {
           VideoCard
         
       */}
-    </div>
+      </div>
+    </Provider>
   );
 }
 
