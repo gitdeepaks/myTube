@@ -1,8 +1,34 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { toggleMenu } from "../utils/appSlice";
 import { useDispatch } from "react-redux";
+import { YOUTUBE_SEARCH_API } from "../utils/contants";
 
 const Head = () => {
+  const [searchQauery, setSearchQauery] = useState("");
+
+  const getSearchSugessions = async () => {
+    try {
+      const response = await fetch(YOUTUBE_SEARCH_API + searchQauery);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log(data[1]);
+    } catch (error) {
+      console.error("Fetch error: " + error.message);
+    }
+  };
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      if (searchQauery) {
+        setTimeout(() => getSearchSugessions(), 200);
+      }
+    }, 3000); // Only invoke after 200ms of inactivity
+
+    return () => clearTimeout(handler); // Clean up in the effect's cleanup function
+  }, [searchQauery]); // Effect runs on every change to searchQauery
+
   const dispatch = useDispatch();
   const toggleMenuHandler = () => {
     dispatch(toggleMenu());
@@ -32,6 +58,8 @@ const Head = () => {
             <input
               className="w-full px-4 py-2 leading-tight rounded-l-full text-gray-700 bg-white border border-gray-300  focus:outline-none focus:bg-white focus:border-blue-500"
               type="text"
+              value={searchQauery}
+              onChange={(e) => setSearchQauery(e.target.value)}
               placeholder="Search"
             />
             <button className="px-3 bg-red-500 rounded-r-full text-white h-9">
